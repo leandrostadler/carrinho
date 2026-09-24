@@ -224,35 +224,9 @@
 
     <main class="container">
         <h2 class="section-title">Destaques da Frota</h2>
-        <div class="grid-cars">
-            
-            <div class="car-card">
-                <div class="car-img">[ Imagem Veículo Neon-1 ]</div>
-                <div class="car-info">
-                    <h3 class="car-title">Cyber X-200</h3>
-                    <p class="car-price">R$ 450.000</p>
-                    <a href="contato.html" class="btn">Comprar</a>
-                </div>
-            </div>
-
-            <div class="car-card">
-                <div class="car-img">[ Imagem Veículo Aero-GT ]</div>
-                <div class="car-info">
-                    <h3 class="car-title">Aero GT-Hyper</h3>
-                    <p class="car-price">R$ 890.000</p>
-                    <a href="contato.html" class="btn">Comprar</a>
-                </div>
-            </div>
-
-            <div class="car-card">
-                <div class="car-img">[ Imagem Veículo Stealth-V ]</div>
-                <div class="car-info">
-                    <h3 class="car-title">Stealth V-EV</h3>
-                    <p class="car-price">R$ 320.000</p>
-                    <a href="contato.html" class="btn">Comprar</a>
-                </div>
-            </div>
-
+        <div class="grid-cars" id="grid-cars">
+            <!-- Os carros serão carregados dinamicamente do Supabase aqui -->
+            <p style="text-align: center; grid-column: 1/-1;">A carregar veículos...</p>
         </div>
     </main>
 
@@ -268,8 +242,46 @@
 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Teste de conexão: abre o console do navegador (F12) para confirmar
-        console.log('Supabase carregado com sucesso na Cyber Motors!', _supabase);
+        async function carregarCarros() {
+            // ATENÇÃO: Substitui 'tabela' pelo nome EXATO da tua tabela no Supabase!
+            const NOME_DA_TABELA = 'tabela'; 
+
+            const { data: carros, error } = await _supabase
+                .from(NOME_DA_TABELA)
+                .select('*');
+
+            if (error) {
+                console.error('Erro ao procurar dados no Supabase:', error);
+                return;
+            }
+
+            const grid = document.getElementById('grid-cars');
+
+            if (carros && carros.length > 0) {
+                grid.innerHTML = ''; // Limpa a mensagem "A carregar..."
+
+                carros.forEach(carro => {
+                    // Altera os nomes dos campos (ex: carro.nome, carro.preco) para corresponder às tuas colunas no Supabase
+                    grid.innerHTML += `
+                        <div class="car-card">
+                            <div class="car-img">
+                                ${carro.imagem_url ? `<img src="${carro.imagem_url}" alt="${carro.nome || 'Carro'}" style="width:100%;height:100%;object-fit:cover;">` : `[ ${carro.nome || 'Veículo'} ]`}
+                            </div>
+                            <div class="car-info">
+                                <h3 class="car-title">${carro.nome || carro.titulo || 'Modelo Cyber'}</h3>
+                                <p class="car-price">R$ ${carro.preco || '0'}</p>
+                                <a href="contato.html" class="btn">Comprar</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Nenhum veículo encontrado na base de dados.</p>';
+            }
+        }
+
+        // Executa a busca ao carregar a página
+        carregarCarros();
     </script>
 
 </body>
