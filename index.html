@@ -260,5 +260,17 @@
         <p>&copy; 2026 CYBER MOTORS. Todos os direitos reservados.</p>
     </footer>
 
+    <!-- INTEGRAÇÃO COM SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://ilvoeebsaxfdwnurgzbn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_x4_NekE82RAV-exopwALHA_D8SylVdY';
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Teste de conexão: abre o console do navegador (F12) para confirmar
+        console.log('Supabase carregado com sucesso na Cyber Motors!', _supabase);
+    </script>
+
 </body>
 </html>
